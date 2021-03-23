@@ -1,38 +1,81 @@
 import './app_1.css'
-import $ from 'jquery'
+// import $ from 'jquery'
 // console.log($);
+// import Model from './base/Model'
+// import View from './base/View'
+// import EventBus from './base/EventBus'
 
-const $button_1 = $('#add_1')
-const $button_2 = $('#minus_1')
-const $button_3 = $('#mul_1')
-const $button_4 = $('#divide_1')
-const $number = $('#number')
+import Vue from 'vue'
+// console.log(Vue);
 
-// app_1
-const n = localStorage.getItem('n')
-$number.text(n || 100)
+// const eventBus = new EventBus()
 
-$button_1.on('click' ,()=>{
-    let n = parseInt($number.text())
-    n += 1
-    localStorage.setItem('n', n)
-    $number.text(n)
-})
-$button_2.on('click' ,()=>{
-    let n = parseInt($number.text())
-    n -= 1
-    localStorage.setItem('n', n)
-    $number.text(n)
-})
-$button_3.on('click' ,()=>{
-    let n = parseInt($number.text())
-    n *= 2
-    localStorage.setItem('n', n)
-    $number.text(n)
-})
-$button_4.on('click' ,()=>{
-    let n = parseInt($number.text())
-    n /= 2
-    localStorage.setItem('n', n)
-    $number.text(n)
-})
+// console.log(eventBus.on);
+// console.log(eventBus.trigger);
+
+// 数据相关都放到M
+
+
+// 视图相关都放到V
+
+// 其他的都放到C
+const init = (el)=> {
+    const eventBus = new Vue()
+    console.log(eventBus.$on);
+    console.log(eventBus.$off);
+    console.log(eventBus.$emit);
+    
+    const m = {
+        get(){
+            return parseFloat(localStorage.getItem('n')) || 100
+        },
+        set(n) {
+            localStorage.setItem('n', n)
+        }
+    }
+    new Vue({
+        el: el,
+        data:{
+            n: m.get()
+        },
+        methods: {
+            add() {
+                this.n += 1
+            },
+            minus() {
+                this.n -= 1
+            },
+            mul() {
+                this.n *= 2
+            },
+            divide() {
+                this.n /= 2
+            },
+        },
+        watch: {
+            // 此处的函数不能使用箭头函数 因为箭头函数中的this是window
+            n: function() {
+                m.set(this.n)
+            }
+        },
+        template: `
+        <!-- 有数据存储功能的计算器 -->
+        <section id="app_1">
+            <div class="output">
+                <span id="number">{{n}}</span>
+            </div>
+            <div class="actions">
+                <button @click="add">+1</button>
+                <button @click="minus">-1</button>
+                <button @click="mul">*2</button>
+                <button @click="divide">/2</button>
+            </div>
+        </section>
+        `
+    })
+}
+
+export default init
+
+// Vue 基本做到了MVC简化代码的极致 
+// 不太可能再简化了
